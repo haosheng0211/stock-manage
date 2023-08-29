@@ -1,0 +1,13 @@
+@import "../../vendor/filament/filament/resources/css/app.css";
+
+.filament-tables-table-container {
+  @apply overflow-y-auto max-h-[59vh];
+}
+
+.filament-tables-table-container .filament-tables-table table {
+  @apply border-collapse;
+}
+
+.filament-tables-table-container .filament-tables-table thead {
+  @apply bg-gray-100 dark:bg-gray-800 sticky top-0;
+}
