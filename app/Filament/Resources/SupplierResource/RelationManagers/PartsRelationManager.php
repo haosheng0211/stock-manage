@@ -5,7 +5,6 @@ namespace App\Filament\Resources\SupplierResource\RelationManagers;
 use App\Filament\Actions\EditBulkAction;
 use App\Models\ContactPeople;
 use App\Models\Part;
-use App\Models\Supplier;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -131,29 +130,6 @@ class PartsRelationManager extends RelationManager
     {
         return [
             EditBulkAction::make()
-                ->form([
-                    Select::make('supplier_id')
-                        ->label(trans('validation.attributes.supplier'))
-                        ->options(Supplier::orderBy('name')->pluck('name', 'id'))
-                        ->preload()
-                        ->reactive()
-                        ->searchable(),
-                    Select::make('contact_people_id')
-                        ->label(trans('validation.attributes.contact_people'))
-                        ->options(function (callable $get) {
-                            if (blank($get('supplier_id'))) {
-                                return [];
-                            }
-
-                            return Supplier::find($get('supplier_id'))->contactPeople->pluck('name', 'id');
-                        })
-                        ->preload()
-                        ->required(fn (callable $get) => ! blank($get('supplier_id')))
-                        ->searchable(),
-                    TextInput::make('brand')
-                        ->label(trans('validation.attributes.brand'))
-                        ->datalist(Part::getBrands()),
-                ])
                 ->visible(fn () => auth()->user()->can('bulkUpdate', Part::class)),
             DeleteBulkAction::make()
                 ->visible(fn () => auth()->user()->can('bulkDelete', Part::class)),
