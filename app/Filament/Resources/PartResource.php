@@ -49,7 +49,8 @@ class PartResource extends Resource
                     ->required(),
                 TextInput::make('brand')
                     ->label(trans('validation.attributes.brand'))
-                    ->required(),
+                    ->required()
+                    ->datalist(Part::getBrands()),
                 TextInput::make('quantity')
                     ->label(trans('validation.attributes.quantity'))
                     ->integer(),
