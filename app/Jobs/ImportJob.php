@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Enums\DocumentStatus;
 use App\Models\Document;
 use App\Models\Part;
+use App\Rules\PartNumberRule;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Query\Builder;
@@ -98,7 +99,7 @@ class ImportJob implements ShouldQueue
     public function validate(array $format): \Illuminate\Validation\Validator
     {
         return Validator::make($format, [
-            'part_number'       => ['required'],
+            'part_number'       => ['required', new PartNumberRule()],
             'quantity'          => ['required', 'numeric', 'min:1'],
             'supplier_id'       => ['required', 'integer', 'exists:suppliers,id'],
             'contact_people_id' => ['required', 'integer', Rule::exists('contact_people', 'id')->where(fn (Builder $builder) => $builder->where('supplier_id', $format['supplier_id']))],
