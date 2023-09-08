@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PartResource\Pages;
 use App\Models\Part;
+use App\Rules\PartNumberRule;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -45,6 +46,7 @@ class PartResource extends Resource
                         ->searchable(),
                 ]),
                 TextInput::make('part_number')
+                    ->rule(new PartNumberRule())
                     ->label(trans('validation.attributes.part_number'))
                     ->required(),
                 TextInput::make('brand')
