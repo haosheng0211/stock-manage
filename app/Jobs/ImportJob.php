@@ -86,8 +86,8 @@ class ImportJob implements ShouldQueue
             'part_number'       => (string) $row[0],
             'brand'             => (string) $row[1],
             'quantity'          => (int) $row[2],
-            'twd_price'         => (string) $row[3],
-            'usd_price'         => (string) $row[4],
+            'twd_price'         => (string) $row[3] ?: 0,
+            'usd_price'         => (string) $row[4] ?: 0,
             'datecode'          => (string) $row[5],
             'leadtime'          => (string) $row[6],
             'package'           => (string) $row[7],
@@ -125,8 +125,7 @@ class ImportJob implements ShouldQueue
         ]);
 
         $this->document->update([
-            'status'        => DocumentStatus::FAILURE,
-            'error_message' => $exception->getMessage(),
+            'status' => DocumentStatus::FAILURE,
         ]);
     }
 
