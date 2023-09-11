@@ -86,8 +86,8 @@ class ImportJob implements ShouldQueue
             'part_number'       => (string) $row[0],
             'brand'             => (string) $row[1],
             'quantity'          => (int) $row[2],
-            'twd_price'         => (string) $row[3] ?? 0,
-            'usd_price'         => (string) $row[4] ?? 0,
+            'twd_price'         => (string) $row[3],
+            'usd_price'         => (string) $row[4],
             'datecode'          => (string) $row[5],
             'leadtime'          => (string) $row[6],
             'package'           => (string) $row[7],
@@ -104,8 +104,8 @@ class ImportJob implements ShouldQueue
             'quantity'          => ['required', 'numeric', 'min:1'],
             'supplier_id'       => ['required', 'integer', 'exists:suppliers,id'],
             'contact_people_id' => ['required', 'integer', Rule::exists('contact_people', 'id')->where(fn (Builder $builder) => $builder->where('supplier_id', $format['supplier_id']))],
-            'twd_price'         => ['required', 'numeric', 'min:0'],
-            'usd_price'         => ['required', 'numeric', 'min:0'],
+            'twd_price'         => ['nullable', 'numeric', 'min:0'],
+            'usd_price'         => ['nullable', 'numeric', 'min:0'],
         ]);
     }
 
