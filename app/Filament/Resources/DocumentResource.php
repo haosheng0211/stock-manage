@@ -40,6 +40,9 @@ class DocumentResource extends Resource
                         Supplier::class      => trans('validation.attributes.supplier'),
                     ])
                     ->label(trans('validation.attributes.model')),
+                FileColumn::make('original_file')
+                    ->label(trans('validation.attributes.original_file'))
+                    ->color('success'),
                 FileColumn::make('files')
                     ->label(trans('validation.attributes.file'))
                     ->color(fn ($record) => $record->type === DocumentType::EXPORT ? 'primary' : 'danger'),

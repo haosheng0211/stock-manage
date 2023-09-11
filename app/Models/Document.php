@@ -8,13 +8,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Document extends Model
 {
     protected $casts = [
-        'files' => 'array',
+        'original_file' => 'array',
+        'files'         => 'array',
     ];
 
     protected $fillable = [
         'type',
         'user_id',
         'model',
+        'original_file',
         'files',
         'status',
     ];

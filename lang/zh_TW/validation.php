@@ -158,5 +158,6 @@ return [
         'updated_until'        => '更新時間(迄)',
         'usd_price'            => 'USD 價格',
         'user'                 => '使用者',
+        'original_file'        => '原始檔案',
     ],
 ];
