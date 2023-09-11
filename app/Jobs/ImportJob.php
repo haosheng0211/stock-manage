@@ -15,6 +15,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -85,8 +86,8 @@ class ImportJob implements ShouldQueue
             'part_number'       => (string) $row[0],
             'brand'             => (string) $row[1],
             'quantity'          => (int) $row[2],
-            'twd_price'         => (string) $row[3],
-            'usd_price'         => (string) $row[4],
+            'twd_price'         => (string) $row[3] ?? 0,
+            'usd_price'         => (string) $row[4] ?? 0,
             'datecode'          => (string) $row[5],
             'leadtime'          => (string) $row[6],
             'package'           => (string) $row[7],
@@ -139,10 +140,10 @@ class ImportJob implements ShouldQueue
 
         app('excel.export')->fileName($name)->data($errors)->output();
 
-        if (! file_exists(config('excel.export.directory') . DIRECTORY_SEPARATOR . $name)) {
+        if (! Storage::exists(config('excel.export.directory') . DIRECTORY_SEPARATOR . $name)) {
             return;
         }
 
-        $this->files[] = $name;
+        $this->files[] = config('excel.export.directory') . DIRECTORY_SEPARATOR . $name;
     }
 }
