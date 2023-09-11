@@ -35,7 +35,15 @@ class ImportJob implements ShouldQueue
     public function handle(): void
     {
         try {
-            $rows = $this->open($this->params['file']);
+            $rows = array_filter($this->open($this->params['file']), function ($item) {
+                // 使用 array_filter 移除所有空值
+                $filtered = array_filter($item, function ($value) {
+                    return $value !== '';
+                });
+
+                // 如果過濾後的數組不為空，則保留該數組
+                return ! empty($filtered);
+            });
             $errors = [];
 
             DB::beginTransaction();
