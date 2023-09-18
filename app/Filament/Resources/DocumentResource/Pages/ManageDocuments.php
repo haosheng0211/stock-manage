@@ -4,6 +4,7 @@ namespace App\Filament\Resources\DocumentResource\Pages;
 
 use App\Filament\Resources\DocumentResource;
 use Filament\Resources\Pages\ManageRecords;
+use Filament\Tables\Actions\DeleteAction;
 
 class ManageDocuments extends ManageRecords
 {
@@ -11,16 +12,14 @@ class ManageDocuments extends ManageRecords
 
     protected function getActions(): array
     {
-        return [];
+        return [
+        ];
     }
 
     protected function getTableActions(): array
     {
-        return [];
-    }
-
-    protected function getTableBulkActions(): array
-    {
-        return [];
+        return [
+            DeleteAction::make()
+        ];
     }
 }
