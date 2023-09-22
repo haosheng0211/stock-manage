@@ -19,7 +19,7 @@ class ManageDocuments extends ManageRecords
     protected function getTableActions(): array
     {
         return [
-            DeleteAction::make()
+            DeleteAction::make(),
         ];
     }
 }
