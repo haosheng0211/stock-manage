@@ -48,4 +48,6 @@ final class UserPermission extends Enum implements LocalizedEnum
     public const DELETE_CONTACT_PEOPLE = 'delete-contact-people';
 
     public const EXPORT_CONTACT_PEOPLE = 'export-contact-people';
+
+    public const SETTING_BACKUP = 'setting-backup';
 }

@@ -2,11 +2,13 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\UserPermission;
 use App\Settings\BackupSetting;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\SettingsPage;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
 
 class ManageBackup extends SettingsPage
@@ -20,6 +22,11 @@ class ManageBackup extends SettingsPage
     protected static ?string $navigationGroup = '系統';
 
     protected static ?string $navigationLabel = '備份';
+
+    public function mount(): void
+    {
+        abort_unless(Auth::user()->hasPermission(UserPermission::SETTING_BACKUP), 403);
+    }
 
     protected function getFormSchema(): array
     {
@@ -47,5 +54,10 @@ class ManageBackup extends SettingsPage
                     ->required(),
             ]),
         ];
+    }
+
+    protected static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->hasPermission(UserPermission::SETTING_BACKUP);
     }
 }

@@ -40,5 +40,6 @@ return [
         Enums\UserPermission::UPDATE_CONTACT_PEOPLE => '編輯聯絡人',
         Enums\UserPermission::DELETE_CONTACT_PEOPLE => '刪除聯絡人',
         Enums\UserPermission::EXPORT_CONTACT_PEOPLE => '匯出聯絡人',
+        Enums\UserPermission::SETTING_BACKUP        => '備份設定',
     ],
 ];
