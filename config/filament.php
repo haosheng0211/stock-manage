@@ -4,7 +4,6 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Http\Middleware\MirrorConfigToSubpackages;
 use Filament\Pages;
-use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -60,7 +59,7 @@ return [
     |
     */
 
-    'home_url' => '/parts',
+    'home_url' => '/',
 
     /*
     |--------------------------------------------------------------------------
@@ -104,6 +103,7 @@ return [
         'namespace' => 'App\\Filament\\Pages',
         'path'      => app_path('Filament/Pages'),
         'register'  => [
+            Pages\Dashboard::class,
         ],
     ],
 
@@ -120,7 +120,8 @@ return [
     'resources' => [
         'namespace' => 'App\\Filament\\Resources',
         'path'      => app_path('Filament/Resources'),
-        'register'  => [],
+        'register'  => [
+        ],
     ],
 
     /*
@@ -136,7 +137,9 @@ return [
     'widgets' => [
         'namespace' => 'App\\Filament\\Widgets',
         'path'      => app_path('Filament/Widgets'),
-        'register'  => [],
+        'register'  => [
+            Filament\Widgets\AccountWidget::class,
+        ],
     ],
 
     /*
