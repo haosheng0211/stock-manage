@@ -38,7 +38,7 @@ class ImportJob implements ShouldQueue
             $rows = array_filter($this->open($this->params['file']), function ($item) {
                 // 使用 array_filter 移除所有空值
                 $filtered = array_filter($item, function ($value) {
-                    return $value !== '';
+                    return trim($value) !== '';
                 });
 
                 // 如果過濾後的數組不為空，則保留該數組
