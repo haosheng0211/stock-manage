@@ -15,6 +15,7 @@ use Filament\Resources\Table;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TagsColumn;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Builder;
 
 class SupplierResource extends Resource
 {
@@ -96,5 +97,10 @@ class SupplierResource extends Resource
             RelationManagers\ContactPeopleRelationManager::class,
             RelationManagers\PartsRelationManager::class,
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->with(['parts']);
     }
 }

@@ -22,7 +22,7 @@ class Supplier extends Model
     public function brands(): Attribute
     {
         return Attribute::get(function () {
-            return array_values(Part::getBrands($this->attributes['id'])->toArray());
+            return $this->parts->pluck('brand')->unique()->values()->toArray();
         });
     }
 
