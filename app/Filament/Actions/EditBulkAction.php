@@ -60,25 +60,13 @@ class EditBulkAction extends BulkAction
 
                     foreach ($records as $record) {
                         $attributes = [
-                            'brand'             => $data['brand'] ?? $record->brand,
-                            'supplier_id'       => (int) ($data['supplier_id'] ?? $record->supplier_id),
-                            'contact_people_id' => (int) ($data['contact_people_id'] ?? $record->contact_people_id),
+                            'brand'             => $data['brand'] ?: $record->brand,
+                            'supplier_id'       => $data['supplier_id'] ?: $record->supplier_id,
+                            'contact_people_id' => $data['contact_people_id'] ?: $record->contact_people_id,
                         ];
                         $force_update = isset($data['options']) && in_array('force_update', $data['options']);
 
-                        if ($attributes['supplier_id'] !== $record->supplier_id && ! $force_update) {
-                            continue;
-                        }
-
-                        if ($attributes['supplier_id'] !== $record->supplier_id) {
-                            Part::where(['brand' => $attributes['brand'], 'supplier_id' => $attributes['supplier_id'], 'part_number' => $record->part_number])->delete();
-                        }
-
-                        $record->update([
-                            'brand'             => $attributes['brand'],
-                            'supplier_id'       => $attributes['supplier_id'],
-                            'contact_people_id' => $attributes['contact_people_id'],
-                        ]);
+                        $this->updatePart($record, $attributes, $force_update);
                     }
 
                     DB::commit();
@@ -98,5 +86,23 @@ class EditBulkAction extends BulkAction
     public static function getDefaultName(): ?string
     {
         return 'edit';
+    }
+
+    public function updatePart(Part $record, array $attributes, bool $force_update = false): void
+    {
+        $part = Part::where(['supplier_id' => $attributes['supplier_id'], 'part_number' => $record->part_number, 'brand' => $attributes['brand']])->first();
+
+        if ($part) {
+            if ($part->id !== $record->id && ! $force_update) {
+                return;
+            }
+
+            $part->delete();
+            $record->update($attributes);
+
+            return;
+        }
+
+        $record->update($attributes);
     }
 }
