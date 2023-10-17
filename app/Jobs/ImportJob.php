@@ -62,16 +62,29 @@ class ImportJob implements ShouldQueue
                     continue;
                 }
 
-                Part::updateOrCreate(['supplier_id' => $item['supplier_id'], 'brand' => $item['brand'], 'part_number' => $item['part_number']], [
-                    'contact_people_id' => $item['contact_people_id'],
-                    'quantity'          => $item['quantity'],
-                    'twd_price'         => $item['twd_price'],
-                    'usd_price'         => $item['usd_price'],
-                    'datecode'          => $item['datecode'],
-                    'leadtime'          => $item['leadtime'],
-                    'package'           => $item['leadtime'],
-                    'description'       => $item['description'],
-                ]);
+                $wheres = ['supplier_id' => $item['supplier_id'], 'brand' => $item['brand'], 'part_number' => $item['part_number']];
+
+                if ($part = Part::where($wheres)->first()) {
+                    $part->update([
+                        'contact_people_id' => $item['contact_people_id'],
+                        'quantity'          => $item['quantity'],
+                        'datecode'          => $item['datecode'],
+                        'leadtime'          => $item['leadtime'],
+                        'package'           => $item['leadtime'],
+                        'description'       => $item['description'],
+                    ]);
+                } else {
+                    Part::create(array_merge($wheres, [
+                        'contact_people_id' => $item['contact_people_id'],
+                        'quantity'          => $item['quantity'],
+                        'twd_price'         => $item['twd_price'],
+                        'usd_price'         => $item['usd_price'],
+                        'datecode'          => $item['datecode'],
+                        'leadtime'          => $item['leadtime'],
+                        'package'           => $item['leadtime'],
+                        'description'       => $item['description'],
+                    ]));
+                }
             }
 
             $this->output($errors);
