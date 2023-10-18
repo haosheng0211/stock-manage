@@ -72,6 +72,7 @@ class ImportJob implements ShouldQueue
                         'leadtime'          => $item['leadtime'],
                         'package'           => $item['leadtime'],
                         'description'       => $item['description'],
+                        'updated_at'        => Carbon::now(),
                     ]);
                 } else {
                     Part::create(array_merge($wheres, [
