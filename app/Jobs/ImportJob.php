@@ -78,8 +78,8 @@ class ImportJob implements ShouldQueue
                     Part::create(array_merge($wheres, [
                         'contact_people_id' => $item['contact_people_id'],
                         'quantity'          => $item['quantity'],
-                        'twd_price'         => $item['twd_price'],
-                        'usd_price'         => $item['usd_price'],
+                        'twd_price'         => is_numeric($item['twd_price']) ? $item['twd_price'] : 0,
+                        'usd_price'         => is_numeric($item['usd_price']) ? $item['usd_price'] : 0,
                         'datecode'          => $item['datecode'],
                         'leadtime'          => $item['leadtime'],
                         'package'           => $item['leadtime'],
