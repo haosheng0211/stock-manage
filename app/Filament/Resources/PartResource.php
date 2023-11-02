@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PartResource\Pages;
 use App\Models\Part;
 use App\Rules\PartNumberRule;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -15,6 +18,7 @@ use Filament\Resources\Table;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\Rules\Unique;
 
 class PartResource extends Resource
 {
@@ -48,6 +52,9 @@ class PartResource extends Resource
                 TextInput::make('part_number')
                     ->rule(new PartNumberRule())
                     ->label(trans('validation.attributes.part_number'))
+                    ->unique(callback: function (Unique $rule, callable $get) {
+                        return $rule->where('supplier_id', $get('supplier_id'))->where('part_number', $get('part_number'))->where('brand', $get('brand'));
+                    }, ignoreRecord: true)
                     ->required(),
                 TextInput::make('brand')
                     ->label(trans('validation.attributes.brand'))
@@ -74,6 +81,10 @@ class PartResource extends Resource
                         ->label(trans('validation.attributes.usd_price'))
                         ->numeric(),
                 ]),
+                Checkbox::make('is_updated_at')
+                    ->label('是否更新時間')
+                    ->default(true)
+                    ->hiddenOn('create'),
             ])
             ->columns(1);
     }

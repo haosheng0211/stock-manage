@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\PartResource\Pages;
 
 use App\Filament\Actions\EditBulkAction;
@@ -18,6 +20,7 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
 class ManagePart extends ManageRecords
@@ -57,7 +60,17 @@ class ManagePart extends ManageRecords
     {
         return [
             ViewAction::make(),
-            EditAction::make(),
+            EditAction::make()->using(function (Model $record, array $data): Model {
+                $is_updated_at = data_get($data, 'is_updated_at', true);
+
+                if (! $is_updated_at) {
+                    $record->timestamps = false;
+                }
+
+                $record->update($data);
+
+                return $record;
+            }),
         ];
     }
 
