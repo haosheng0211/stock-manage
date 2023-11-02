@@ -107,15 +107,15 @@ class ImportJob implements ShouldQueue
         return [
             'part_number'       => (string) $row[0],
             'brand'             => (string) $row[1],
-            'quantity'          => (int) $row[2],
+            'quantity'          => force_format_number($row[2]),
             'twd_price'         => (string) $row[3] ?: 0,
             'usd_price'         => (string) $row[4] ?: 0,
             'datecode'          => (string) $row[5],
             'leadtime'          => (string) $row[6],
             'package'           => (string) $row[7],
             'description'       => (string) $row[8],
-            'contact_people_id' => (int) $row[9],
-            'supplier_id'       => (int) $row[10],
+            'contact_people_id' => force_format_number($row[9]),
+            'supplier_id'       => force_format_number($row[10]),
         ];
     }
 
