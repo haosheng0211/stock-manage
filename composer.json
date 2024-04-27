@@ -1,7 +1,6 @@
 {
     "require": {
         "php": "^8.0.2",
-        "ext-xlswriter": "*",
         "bensampo/laravel-enum": "^6.3",
         "doctrine/dbal": "^3.6",
         "filament/filament": "^2.17",
