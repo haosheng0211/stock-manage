@@ -33,7 +33,7 @@ class Part extends Model
         return $this->belongsTo(ContactPeople::class);
     }
 
-    public static function getBrands(int $supplier_id = null): Collection
+    public static function getBrands(?int $supplier_id = null): Collection
     {
         $builder = self::query();
 

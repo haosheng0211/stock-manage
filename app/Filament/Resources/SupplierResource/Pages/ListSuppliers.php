@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\SupplierResource\Pages;
 
 use App\Enums\SupplierType;
+use App\Exports\SupplierExport;
 use App\Filament\Actions\ExportAction;
 use App\Filament\Resources\SupplierResource;
 use App\Models\Part;
@@ -27,7 +28,7 @@ class ListSuppliers extends ListRecords
         return [
             CreateAction::make(),
             ExportAction::make()
-                ->builder(Supplier::query()->orderBy('name'))
+                ->exportable(SupplierExport::class)
                 ->attributes([
                     'id'    => trans('validation.attributes.id'),
                     'name'  => trans('validation.attributes.name'),

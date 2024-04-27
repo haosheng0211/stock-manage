@@ -4,26 +4,24 @@ namespace App\Filament\Actions;
 
 use App\Enums\DocumentStatus;
 use App\Enums\DocumentType;
-use App\Jobs\ExportJob;
 use App\Models\Document;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Actions\Action;
 use Filament\Support\Actions\Concerns\CanCustomizeProcess;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ExportAction extends Action
 {
     use CanCustomizeProcess;
 
-    protected Builder $builder;
-
     protected array $attributes = [];
 
     protected array $default_attributes = [];
+
+    protected string $exportable;
 
     protected function setUp(): void
     {
@@ -32,7 +30,7 @@ class ExportAction extends Action
             return [
                 TextInput::make('name')
                     ->label(trans('validation.attributes.name'))
-                    ->default(Carbon::now()->format('Ymd_His') . '_' . $this->builder->getModel()->getTable())
+                    ->default(Carbon::now()->format('Ymd_His'))
                     ->required(),
                 CheckboxList::make('attributes')
                     ->label(trans('validation.attributes.attributes'))
@@ -45,32 +43,36 @@ class ExportAction extends Action
                     ->columns(4)
                     ->options([
                         'headings' => '顯示表頭',
-                        'split'    => '分割檔案',
                     ])
                     ->reactive(),
-                TextInput::make('split_size')
-                    ->label('分割筆數')
-                    ->hidden(fn ($get) => ! in_array('split', $get('options')))
-                    ->default(30000),
             ];
         });
         $this->label('匯出');
         $this->color('warning');
         $this->action(function (array $data) {
-            try {
-                DB::beginTransaction();
-                $document = Document::create([
-                    'type'    => DocumentType::EXPORT,
-                    'user_id' => Auth::id(),
-                    'model'   => get_class($this->builder->getModel()),
-                    'status'  => DocumentStatus::PROCESS,
-                ]);
+            $document = Document::create([
+                'type'    => DocumentType::EXPORT,
+                'user_id' => Auth::id(),
+                'model'   => $this->getModelName(),
+                'status'  => DocumentStatus::PROCESS,
+            ]);
 
-                ExportJob::dispatchNow($document, $this->builder, $this->attributes, $data);
-                DB::commit();
+            try {
+                $file_path = config('excel.export.directory') . DIRECTORY_SEPARATOR . $data['name'] . '.xlsx';
+
+                Excel::store(app($this->exportable, ['columns' => $this->transformAttributes($data['attributes']), 'options' => $data['options']]), $file_path, 'public');
+                $document->update([
+                    'files' => [
+                        $file_path,
+                    ],
+                    'status' => DocumentStatus::SUCCESS,
+                ]);
                 $this->success();
             } catch (\Throwable $exception) {
-                DB::rollBack();
+                $document->update([
+                    'status'        => DocumentStatus::FAILURE,
+                    'error_message' => $exception->getMessage(),
+                ]);
                 $this->failureNotificationTitle('項目匯出失敗。');
                 $this->failure();
             }
@@ -78,9 +80,9 @@ class ExportAction extends Action
         $this->successNotificationTitle('項目匯出完成，請至「檔案」下載。');
     }
 
-    public function builder(Builder $builder): static
+    public function exportable(string $exportable): static
     {
-        $this->builder = $builder;
+        $this->exportable = $exportable;
 
         return $this;
     }
@@ -91,6 +93,24 @@ class ExportAction extends Action
         $this->default_attributes = $default;
 
         return $this;
+    }
+
+    public function getModelName(): string
+    {
+        $manage = get_class($this->livewire);
+
+        return $manage::getResource()::getModel();
+    }
+
+    public function transformAttributes(array $attributes): array
+    {
+        $list = [];
+
+        foreach ($attributes as $attribute) {
+            $list[$attribute] = $this->attributes[$attribute];
+        }
+
+        return $list;
     }
 
     public static function getDefaultName(): ?string

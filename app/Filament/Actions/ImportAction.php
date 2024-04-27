@@ -4,20 +4,22 @@ namespace App\Filament\Actions;
 
 use App\Enums\DocumentStatus;
 use App\Enums\DocumentType;
-use App\Jobs\ImportJob;
 use App\Models\Document;
-use App\Models\Part;
 use Filament\Forms\Components\FileUpload;
 use Filament\Pages\Actions\Action;
 use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
 use Livewire\TemporaryUploadedFile;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ImportAction extends Action
 {
     use CanCustomizeProcess;
+
+    public string $importable;
 
     protected function setUp(): void
     {
@@ -35,21 +37,49 @@ class ImportAction extends Action
             $document = Document::create([
                 'type'          => DocumentType::IMPORT,
                 'user_id'       => Auth::id(),
-                'model'         => Part::class,
-                'original_file' => is_array($data['file']) ? $data['file'] : [$data['file']],
+                'model'         => $this->getModelName(),
+                'original_file' => [
+                    $data['file'],
+                ],
                 'status'        => DocumentStatus::PROCESS,
             ]);
 
-            ImportJob::dispatch($document, array_merge($data, [
-                'file' => basename($data['file']),
-            ]));
-            $this->success();
+            Excel::import(app($this->importable, ['document' => $document]), $data['file']);
+            //
+            //            try {
+            //
+            //                $this->success();
+            //            } catch (\Throwable $exception) {
+            //                Log::error('匯入失敗', [
+            //                    'exception' => $exception,
+            //                ]);
+            //                $document->update([
+            //                    'status'        => DocumentStatus::FAILURE,
+            //                    'error_message' => $exception->getMessage(),
+            //                ]);
+            //                $this->failureNotificationTitle('項目匯入失敗，請至「檔案」查看結果。');
+            //                $this->failure();
+            //            }
         });
         $this->successNotificationTitle('項目匯入完成，請至「檔案」查看結果。');
+    }
+
+    public function importable(string $importable): static
+    {
+        $this->importable = $importable;
+
+        return $this;
     }
 
     public static function getDefaultName(): ?string
     {
         return 'import';
+    }
+
+    public function getModelName(): string
+    {
+        $manage = get_class($this->livewire);
+
+        return $manage::getResource()::getModel();
     }
 }

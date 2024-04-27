@@ -14,9 +14,7 @@ class BackupDatabaseMail extends Mailable
     use Queueable;
     use SerializesModels;
 
-    public function __construct(public string $file)
-    {
-    }
+    public function __construct(public string $file) {}
 
     public function envelope(): Envelope
     {

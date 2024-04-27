@@ -50,7 +50,7 @@ class DocumentResource extends Resource
                     ->enum(DocumentStatus::asSelectArray())
                     ->label(trans('validation.attributes.status'))
                     ->colors(DocumentStatus::colors())
-                    ->tooltip(fn (Model|Document $record) => $record->status === DocumentStatus::FAILURE ? $record->error_message : ''),
+                    ->tooltip(fn (Document|Model $record) => $record->error_message),
                 TextColumn::make('updated_at')
                     ->label(trans('validation.attributes.updated_at'))
                     ->sortable()

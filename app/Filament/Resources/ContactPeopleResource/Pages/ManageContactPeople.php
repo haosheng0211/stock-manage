@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ContactPeopleResource\Pages;
 
+use App\Exports\ContactPeopleExport;
 use App\Filament\Actions\ExportAction;
 use App\Filament\Resources\ContactPeopleResource;
 use App\Models\ContactPeople;
@@ -25,7 +26,7 @@ class ManageContactPeople extends ManageRecords
         return [
             CreateAction::make(),
             ExportAction::make()
-                ->builder(ContactPeople::with(['supplier'])->orderBy('supplier_id'))
+                ->exportable(ContactPeopleExport::class)
                 ->attributes([
                     'id'                => trans('validation.attributes.id'),
                     'supplier.id'       => trans('validation.attributes.supplier_id'),

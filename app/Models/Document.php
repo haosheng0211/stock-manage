@@ -13,12 +13,13 @@ class Document extends Model
     ];
 
     protected $fillable = [
-        'type',
         'user_id',
+        'type',
         'model',
-        'original_file',
         'files',
         'status',
+        'error_message',
+        'original_file',
     ];
 
     public function user(): BelongsTo

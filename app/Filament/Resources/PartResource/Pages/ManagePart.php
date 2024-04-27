@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\PartResource\Pages;
 
+use App\Exports\PartExport;
 use App\Filament\Actions\EditBulkAction;
 use App\Filament\Actions\ExportAction;
 use App\Filament\Actions\ImportAction;
 use App\Filament\Resources\PartResource;
+use App\Imports\PartImport;
 use App\Models\Part;
 use App\Models\Supplier;
 use Filament\Forms\Components\DatePicker;
@@ -32,9 +34,10 @@ class ManagePart extends ManageRecords
         return [
             CreateAction::make(),
             ImportAction::make()
+                ->importable(PartImport::class)
                 ->visible(fn () => Auth::user()->can('import', Part::class)),
             ExportAction::make()
-                ->builder(Part::with(['supplier', 'contactPeople'])->orderBy('part_number'))
+                ->exportable(PartExport::class)
                 ->attributes([
                     'part_number'         => trans('validation.attributes.part_number'),
                     'brand'               => trans('validation.attributes.brand'),
